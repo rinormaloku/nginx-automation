@@ -16,8 +16,8 @@ services:
     container_name: nginx
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt
-      - ./nginx/:/etc/nginx/
-      - ./certs:/var/www/certs
+      - /var/www/nginx-automation/nginx/:/etc/nginx/
+      - /var/www/certs:/var/www/certs
     ports:
       - 80:80
       - 443:443
