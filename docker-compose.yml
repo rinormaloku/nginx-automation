@@ -1,0 +1,41 @@
+version: "3.3"
+
+services:
+  suprb:
+    image: kennethreitz/httpbin
+    container_name: suprb
+    ports:
+      - "8090:80"
+    # Update with real application
+    networks:
+      - internal-network
+
+
+  nginx:
+    image: nginx:1.17.0-alpine
+    container_name: nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - internal-network
+
+
+  cert-manager:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: cert-manager
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 5000:5000
+    networks:
+      - internal-network
+
+
+
+networks:
+  internal-network:
