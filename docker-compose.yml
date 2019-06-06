@@ -31,7 +31,9 @@ services:
       dockerfile: Dockerfile
     container_name: cert-manager
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - /etc/letsencrypt:/etc/letsencrypt
+      - /var/www/nginx-automation/nginx/:/var/www/nginx/
+      - /var/www/certs:/var/www/certs
     ports:
       - 5000:5000
     networks:
