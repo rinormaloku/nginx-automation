@@ -13,12 +13,14 @@ def hello_world():
 
 @app.route('/certificate', methods=["POST"])
 def create_cert():
-    domain = request.args.get('domain')
-    result = os.system("bash /app/files/auto.sh " + domain)
-    if result == "0":
-        return make_response(jsonify({'status': "success"}), 200)
-
-    return make_response(jsonify({'status': "failed"}), 400)
+    try:
+        print("Oops!  That was no valid number.  Try again...")
+        domain = request.args.get('domain')
+        result = os.system("bash /app/files/auto.sh " + domain)
+        if result == 0:
+            return make_response(jsonify({'status': "success"}), 200)
+    except RuntimeError:
+        return make_response(jsonify({'status': "failed"}), 400)
 
 
 @app.route('/certificate', methods=["DELETE"])
