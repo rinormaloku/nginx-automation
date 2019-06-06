@@ -1,0 +1,8 @@
+ #!/bin/bash
+
+DOMAIN=$1
+
+
+sudo certbot certonly --webroot -w ./certs -d $DOMAIN --debug-challenges -v
+
+echo $DOMAIN
