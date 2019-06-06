@@ -14,7 +14,6 @@ def hello_world():
 @app.route('/certificate', methods=["POST"])
 def create_cert():
     try:
-        print("Oops!  That was no valid number.  Try again...")
         domain = request.args.get('domain')
         result = os.system("bash /app/files/auto.sh " + domain)
         if result == 0:
