@@ -4,7 +4,9 @@ DOMAIN=$1
 
 echo "Start: certificate creation"
 
-certbot certonly --webroot -w /var/www/certs -d $DOMAIN
+# certbot certonly --webroot -w /var/www/certs -d $DOMAIN
+/var/custom/scripts/acme.sh --issue --domain $DOMAIN --webroot /opt/acme --cert-home /opt/acme-certs --log
+
 
 if [ $? -ne 0 ]; then
   echo "Failed most likely configuration of A record is not done correctly"

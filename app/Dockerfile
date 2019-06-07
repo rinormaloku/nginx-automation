@@ -1,29 +1,31 @@
-FROM ubuntu:18.04
-
-# Python installation
-RUN apt-get update
-RUN apt-get install -y python3 python3-dev python3-pip
-
-# Certbot installation
-RUN apt-get install -y software-properties-common
-RUN add-apt-repository universe
-RUN add-apt-repository ppa:certbot/certbot
-
-ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get -y install certbot
-
-# Setup application
+FROM python:3.6.6-alpine
 COPY requirements.txt /app/requirements.txt
 WORKDIR /app
 RUN pip3 install -r requirements.txt
 
-COPY . /app
-EXPOSE 5000
+RUN apk update -f \
+  && apk --no-cache add -f \
+  openssl \
+  coreutils \
+  bind-tools \
+  curl \
+  socat \
+  tzdata \
+  && rm -rf /var/cache/apk/*
+RUN apk upgrade --no-cache 
+RUN apk add bash --no-cache  
 
-#Setup certbot
-ARG cert_email=sample.test@gmail.com
-RUN certbot register -m $cert_email --non-interactive --agree-tos
-RUN mkdir -p /var/www/certs
+COPY . /app
+
+ARG acmeShVersion=2.8.1
+RUN mkdir -p /var/custom/scripts/
+RUN wget https://github.com/Neilpang/acme.sh/archive/$acmeShVersion.zip
+RUN unzip -p $acmeShVersion.zip acme.sh-$acmeShVersion/acme.sh > /var/custom/scripts/acme.sh
+RUN rm -rf $acmeShVersion.zip
+RUN chmod -R 700 /var/custom/scripts/acme.sh
+RUN sed -i '4116i\    _sleep 10' /var/custom/scripts/acme.sh
+RUN mkdir -p /opt/acme /opt/acme-certs
+EXPOSE 5000
 
 ENTRYPOINT ["python3"]
 CMD ["app.py"]

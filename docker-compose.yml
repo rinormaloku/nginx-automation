@@ -10,20 +10,22 @@ services:
     networks:
       - internal-network
 
-
   nginx:
-    image: nginx:1.17.0-alpine
+    # image: nginx:1.17.0-alpine # ToDo remove build
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
     container_name: nginx
     volumes:
-      - /etc/letsencrypt:/etc/letsencrypt
+      # - /etc/letsencrypt:/etc/letsencrypt
       - /var/www/nginx-automation/nginx/:/etc/nginx/
-      - /var/www/certs:/var/www/certs
+      - /opt/acme:/opt/acme
+      - /opt/acme-certs:/opt/acme-certs
     ports:
       - 80:80
       - 443:443
     networks:
       - internal-network
-
 
   cert-manager:
     build:
@@ -31,15 +33,14 @@ services:
       dockerfile: Dockerfile
     container_name: cert-manager
     volumes:
-      - /etc/letsencrypt:/etc/letsencrypt
+      # - /etc/letsencrypt:/etc/letsencrypt
       - /var/www/nginx-automation/nginx/:/var/www/nginx/
-      - /var/www/certs:/var/www/certs
+      - /opt/acme:/opt/acme
+      - /opt/acme-certs:/opt/acme-certs
     ports:
       - 5000:5000
     networks:
       - internal-network
-
-
 
 networks:
   internal-network:
